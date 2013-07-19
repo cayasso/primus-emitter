@@ -36,7 +36,7 @@ describe('primus-emitter', function () {
   it('should emit event from server', function(done){
     var srv = http();
     var primus = server(srv, opts);
-    srv.listen(function(){ 
+    srv.listen(function(){
       primus.on('connection', function(spark){
         spark.emit('news', 'data');
       });
@@ -132,5 +132,5 @@ describe('primus-emitter', function () {
       });
     });
   });
-  
+
 });
