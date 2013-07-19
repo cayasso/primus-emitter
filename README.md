@@ -37,7 +37,7 @@ primus.on('connection', function (spark) {
   });
 
   // receive incoming sport messages
-  spark.on('sports', function (data) {
+  spark.on('sport', function (data) {
     console.log('sport', data); // => ping-pong
   });
 
