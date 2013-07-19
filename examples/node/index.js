@@ -6,6 +6,7 @@ var server = http.createServer();
 // THE SERVER
 var primus = new Primus(server, { transformer: 'sockjs', parser: 'JSON' });
 
+primus.save('test.js');
 // Add room functionality to primus
 primus.use('emitter', emitter);
 

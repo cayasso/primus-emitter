@@ -20,6 +20,19 @@ function server(srv, opts) {
 
 describe('primus-emitter', function () {
 
+  it('should have required methods', function(done){
+    var srv = http();
+    var primus = server(srv, opts);
+    srv.listen(function(){
+      primus.on('connection', function (spark) {
+        expect(spark.emit).to.be.a('function');
+        expect(spark.on).to.be.a('function');
+        done();
+      });
+      client(srv, primus);
+    });
+  });
+
   it('should emit event from server', function(done){
     var srv = http();
     var primus = server(srv, opts);
