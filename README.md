@@ -15,7 +15,7 @@ $ npm install primus-emitter
 
 ### On the Server
 
-```
+```javascript
 var Primus = require('primus');
 var Emitter = require('primus-emitter');
 var server = require('http').createServer();
@@ -48,7 +48,7 @@ server.listen(8080);
 
 ### On the Client
 
-```
+```javascript
 var primus = Primus.connect('ws://localhost:8080');
 
 primus.on('open', function () {
@@ -76,7 +76,7 @@ primus.on('open', function () {
 
 Emit an event to server to client or client to server.
 
-```
+```javascript
 spark.emit('news', 'hi', fn);
 ```
 
@@ -84,7 +84,7 @@ spark.emit('news', 'hi', fn);
 
 Listen to incoming events.
 
-```
+```javascript
 spark.on('news', fn);
 ```
 
