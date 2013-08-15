@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var fs = require('fs');
+var embedder = require('embedder');
+
+embedder({
+  "./emitter": "lib/emitter.js",
+  "primus-emitter": "lib/index.js"
+}, function (err, c) {
+  if (err) throw err;
+  var code = '';
+  code += "(function (Primus) {\n";
+  code += "\nvar define = define || null;";
+  code += "\nvar require = require || null;\n";
+  code += c;
+  code += "\nrequire('primus-emitter')(Primus);\n";
+  code += "\n})(Primus);\n";
+  fs.writeFileSync('dist/primus-emitter.js', code, 'utf-8');
+});

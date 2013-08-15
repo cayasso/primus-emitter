@@ -4,7 +4,7 @@ var http = require('http');
 var server = http.createServer();
 
 // THE SERVER
-var primus = new Primus(server, { transformer: 'sockjs', parser: 'JSON' });
+var primus = new Primus(server, { transformer: 'websockets', parser: 'JSON' });
 
 primus.save('test.js');
 // Add room functionality to primus

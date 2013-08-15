@@ -2,7 +2,7 @@ var Primus = require('primus');
 var emitter = require('../');
 var http = require('http').Server;
 var expect = require('expect.js');
-var opts = { transformer: 'sockjs', parser: 'JSON' };
+var opts = { transformer: 'websockets', parser: 'JSON' };
 
 
 // creates the client
@@ -23,7 +23,7 @@ describe('primus-emitter', function () {
   it('should have required methods', function(done){
     var srv = http();
     var primus = server(srv, opts);
-    primus.save('test.js');
+    //primus.save('test.js');
     srv.listen(function(){
       primus.on('connection', function (spark) {
         expect(spark.emit).to.be.a('function');
