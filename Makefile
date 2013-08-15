@@ -1,11 +1,11 @@
 REPORTER = spec
 
 test:
-  @./node_modules/.bin/mocha \
-    --reporter $(REPORTER) \
-    --bail
+	@./node_modules/.bin/mocha \
+		--reporter $(REPORTER) \
+		--bail
 
 build:
-  @node bin/build
+	@node bin/build
 
 .PHONY: test
