@@ -19,5 +19,5 @@ embedder({
   code += c;
   code += "\nrequire('primus-emitter')(Primus);\n";
   code += "\n})(Primus);\n";
-  fs.writeFileSync('dist/primus-emitter.js', code, 'utf-8');
+  fs.writeFileSync('build/primus-emitter.js', code, 'utf-8');
 });

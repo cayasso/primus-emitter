@@ -1,4 +1,4 @@
-var emitter = require('../../');
+var Emitter = require('../../');
 var Primus = require('primus');
 var http = require('http');
 var server = http.createServer();
@@ -6,9 +6,8 @@ var server = http.createServer();
 // THE SERVER
 var primus = new Primus(server, { transformer: 'websockets', parser: 'JSON' });
 
-primus.save('test.js');
-// Add room functionality to primus
-primus.use('emitter', emitter);
+// Add emitter functionality to primus
+primus.use('emitter', Emitter);
 
 // Server stuff
 primus.on('connection', function(spark){
@@ -20,13 +19,10 @@ primus.on('connection', function(spark){
   });
 
   setInterval(function(){
-
     spark.emit('news', 'data');
-
   }, 2500);
 
 });
-
 
 
 // THE CLIENT
@@ -45,10 +41,6 @@ function setClient (room) {
   socket.on('news', function (data) {
     console.log('MSG:', data);
   });
-
-  /*socket.on('data', function () {
-    console.log('CLIENT', arguments);
-  });*/
 }
 
 // Set first client
