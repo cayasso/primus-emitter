@@ -3,7 +3,7 @@
  */
 
 var fs = require('fs');
-var file = __dirname + '/build/primus-emitter.js';
+var file = __dirname + '/primus-emitter.js';
 var library = fs.readFileSync(file, 'utf-8');
 var Emitter = require('./lib');
 
