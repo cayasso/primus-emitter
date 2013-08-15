@@ -5,23 +5,21 @@
 var fs = require('fs');
 var file = __dirname + '/dist/primus-emitter.js';
 var library = fs.readFileSync(file, 'utf-8');
-var PrimusEmitter = require('./lib');
-
+var Emitter = require('./lib');
 
 /**
  * Exporting modules.
  */
 
 exports.server = function(primus) {
-
-  if (primus.ark.multiplex) {
-    console.log('has multiplex');
-    console.log(primus.ark.multiplex.server.Spark);
-    PrimusEmitter(primus.ark.multiplex.server.Spark);
-  }
-
-  PrimusEmitter(primus.Spark);
+  process.nextTick(function () {
+    if (primus.ark.multiplex && primus.ark.multiplex.server) {
+      Emitter(primus.ark.multiplex.server.Spark);
+    }
+  });
+  Emitter(primus.Spark);
 };
 
 exports.client = function(){};
 exports.library = library;
+exports.PrimusEmitter = Emitter;

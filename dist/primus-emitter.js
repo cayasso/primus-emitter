@@ -55,6 +55,7 @@ var events = [
   'data',
   'error',
   'reconnect',
+  'reconnecting',
   'connection',
   'disconnection'
 ];
@@ -235,11 +236,21 @@ Emitter.blacklist = events;
 
 define('primus-emitter', function (module, exports) {
 
+/**
+ * Module dependencies.
+ */
+
 var Emitter = require('./emitter');
+
+/**
+ * Expose `PrimusEmitter`.
+ */
 
 module.exports = PrimusEmitter;
 
 function PrimusEmitter(Spark) {
+
+  //Spark.Emitter = Emitter;
 
   /**
    * `Primus#emit` reference.
@@ -263,6 +274,7 @@ function PrimusEmitter(Spark) {
   Spark.prototype.initialise = function () {
     this.$emit = emit;
     this.$emitter = Emitter(this);
+    this.$Emitter = Emitter;
     init.apply(this, arguments);
     return this;
   };
@@ -280,11 +292,10 @@ function PrimusEmitter(Spark) {
   };
 
   return Spark;
-};
+}
 
 // Expose Emitter
 PrimusEmitter.Emitter = Emitter;
-
 });
 
 require('primus-emitter')(Primus);
