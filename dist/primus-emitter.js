@@ -129,7 +129,7 @@ Emitter.prototype.ondata = function (packet) {
 
 Emitter.prototype.emit = function (ev) {
   if (this.isReservedEvent(ev)) {
-    this.conn.$emit.apply(this.conn, arguments);
+    this.conn.__emit__.apply(this.conn, arguments);
   } else {
     var args = slice.call(arguments);
     this.conn.write(this.packet(args));
@@ -182,7 +182,7 @@ Emitter.prototype.onevent = function (packet) {
   if (null != packet.id) {
     args.push(this.ack(packet.id));
   }
-  this.conn.$emit.apply(this.conn, args);
+  this.conn.__emit__.apply(this.conn, args);
   return this;
 };
 
@@ -200,11 +200,10 @@ Emitter.prototype.ack = function (id) {
   return function(){
     // prevent double callbacks
     if (sent) return;
-    var args = slice.call(arguments);
     conn.write({
       id: id,
       type: packets.ACK,
-      data: args
+      data: slice.call(arguments)
     });
   };
 };
@@ -256,13 +255,19 @@ function PrimusEmitter(Spark) {
    * `Primus#emit` reference.
    */
 
-  var emit = Spark.prototype.emit;
+  Spark.prototype.__emit__ = Spark.prototype.emit;
 
   /**
    * `Primus#initialise` reference.
    */
 
-  var init = Spark.prototype.initialise;
+  Spark.prototype.__init__ = Spark.prototype.initialise;
+
+  /**
+   * Adding reference to Emitter.
+   */
+
+  Spark.prototype.__Emitter__ = Emitter;
 
   /**
    * Initialise the Primus and setup all
@@ -272,10 +277,8 @@ function PrimusEmitter(Spark) {
    */
 
   Spark.prototype.initialise = function () {
-    this.$emit = emit;
-    this.$emitter = Emitter(this);
-    this.$Emitter = Emitter;
-    init.apply(this, arguments);
+    this._emitter = new Emitter(this);
+    this.__init__.apply(this, arguments);
     return this;
   };
 
@@ -287,7 +290,7 @@ function PrimusEmitter(Spark) {
    */
 
   Spark.prototype.emit = function (ev) {
-    this.$emitter.emit.apply(this.$emitter, arguments);
+    this._emitter.emit.apply(this._emitter, arguments);
     return this;
   };
 
