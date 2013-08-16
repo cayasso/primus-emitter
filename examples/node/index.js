@@ -31,7 +31,7 @@ function setClient (room) {
   var Socket = primus.Socket;
   var socket = new Socket('ws://localhost:8080');
 
-  setInterval(function(){
+  /*setInterval(function(){
     socket.emit('news', { 'hello': 'world' }, function (data) {
       console.log('sent', arguments);
     });
@@ -40,7 +40,7 @@ function setClient (room) {
   // on data received
   socket.on('news', function (data) {
     console.log('MSG:', data);
-  });
+  });*/
 }
 
 // Set first client
