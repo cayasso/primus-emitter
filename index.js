@@ -13,13 +13,13 @@ var Emitter = require('./lib');
 
 exports.server = function(primus) {
   process.nextTick(function () {
-    if (primus.ark.multiplex && primus.ark.multiplex.server) {
-      Emitter(primus.ark.multiplex.server.Spark);
+    if (primus.multiplex) {
+      Emitter(primus.multiplex.Spark);
     }
   });
   Emitter(primus.Spark);
 };
 
-exports.client = function(){};
 exports.library = library;
+exports.client = function(){};
 exports.PrimusEmitter = Emitter;
