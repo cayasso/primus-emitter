@@ -11,13 +11,15 @@ var Emitter = require('./lib');
  * Exporting modules.
  */
 
-exports.server = function(primus) {
+exports.server = function PrimusEmitter(primus) {
+  primus.$ = primus.$ || {};
+  primus.$.Emitter = Emitter;
+  Emitter(primus.Spark);
   process.nextTick(function () {
-    if (primus.multiplex) {
-      Emitter(primus.multiplex.Spark);
+    if (primus.$.Multiplex) {
+      Emitter(primus.$.Multiplex.Channel.Spark);
     }
   });
-  Emitter(primus.Spark);
 };
 
 exports.library = library;

@@ -249,7 +249,8 @@ module.exports = PrimusEmitter;
 
 function PrimusEmitter(Spark) {
 
-  //Spark.Emitter = Emitter;
+  // return if this already was extended with Emitter;
+  if (Spark.prototype.__Emitter__) return Spark;
 
   /**
    * `Primus#emit` reference.
@@ -290,12 +291,10 @@ function PrimusEmitter(Spark) {
    * @api public
    */
 
-  Spark.prototype.emit = function (ev) {
-  
+  Spark.prototype.emit = function (ev) {   
     // ignore newListener event to avoid this error in node 0.8
     // https://github.com/cayasso/primus-emitter/issues/3
     if ('newListener' === ev) return this;
-
     this.emitter.emit.apply(this.emitter, arguments);
     return this;
   };
