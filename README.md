@@ -90,7 +90,7 @@ spark.on('news', fn);
 
 ## Run tests
 
-```
+``` bash
 $ make test
 ```
 
