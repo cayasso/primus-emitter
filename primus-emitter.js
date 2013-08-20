@@ -247,7 +247,30 @@ var Emitter = require('./emitter');
 
 module.exports = PrimusEmitter;
 
-function PrimusEmitter(Spark) {
+/**
+ * This method initialize PrimusEmitter on primus instance.
+ *
+ * @param {Primus} primus Primus instance.
+ * @param {Object} options The options.
+ * @api public
+ */
+
+function PrimusEmitter (primus, options) {
+  options = options || {};
+
+  // Extending primus.Spark
+  PrimusEmitter.Spark(primus.Spark || primus);
+  return this;
+}
+
+/**
+ * Extend a Spark to add Rooms capabilities.
+ * 
+ * @return {Spark} It returns a primus.Spark
+ * @api public
+ */
+
+PrimusEmitter.Spark = function (Spark) {
 
   // return if this already was extended with Emitter;
   if (Spark.prototype.__Emitter__) return Spark;
@@ -300,7 +323,7 @@ function PrimusEmitter(Spark) {
   };
 
   return Spark;
-}
+};
 
 // Expose Emitter
 PrimusEmitter.Emitter = Emitter;
