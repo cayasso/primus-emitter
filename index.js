@@ -15,11 +15,6 @@ exports.server = function server(primus, options) {
   primus.$ = primus.$ || {};
   primus.$.PrimusEmitter = PrimusEmitter;
   PrimusEmitter(primus, options);
-  process.nextTick(function () {
-    if (primus.$.Multiplex) {
-      PrimusEmitter.Spark(primus.$.Multiplex.Spark);
-    }
-  });
 };
 
 exports.library = library;
