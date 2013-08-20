@@ -1,6 +1,6 @@
 {
   "name": "primus-emitter",
-  "version": "0.2.4",
+  "version": "1.0.0",
   "description": "Simple emitter wrapper for Primus",
   "author": "Jonathan Brumley <cayasso@gmail.com>",
   "homepage": "https://github.com/cayasso/primus-emitter",
