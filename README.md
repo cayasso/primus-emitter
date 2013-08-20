@@ -94,6 +94,11 @@ spark.on('news', fn);
 $ make test
 ```
 
+## Other plugins
+
+ * [primus-rooms](https://github.com/cayasso/primus-rooms)
+ * [primus-multiplex](https://github.com/cayasso/primus-multiplex)
+
 ## License
 
 (The MIT License)
