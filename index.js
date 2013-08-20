@@ -5,23 +5,24 @@
 var fs = require('fs');
 var file = __dirname + '/primus-emitter.js';
 var library = fs.readFileSync(file, 'utf-8');
-var Emitter = require('./lib');
+var PrimusEmitter = require('./lib');
 
 /**
  * Exporting modules.
  */
 
-exports.server = function PrimusEmitter(primus) {
+exports.server = function server(primus, options) {
   primus.$ = primus.$ || {};
-  primus.$.Emitter = Emitter;
-  Emitter(primus.Spark);
+  primus.$.PrimusEmitter = PrimusEmitter;
+  PrimusEmitter(primus, options);
   process.nextTick(function () {
     if (primus.$.Multiplex) {
-      Emitter(primus.$.Multiplex.Channel.Spark);
+      PrimusEmitter.Spark(primus.$.Multiplex.Spark);
     }
   });
 };
 
 exports.library = library;
 exports.client = function(){};
-exports.PrimusEmitter = Emitter;
+exports.Emitter = PrimusEmitter.Emitter;
+exports.PrimusEmitter = PrimusEmitter;
