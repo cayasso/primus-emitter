@@ -54,6 +54,7 @@ var events = [
   'open',
   'data',
   'error',
+  'timeout',
   'reconnect',
   'reconnecting',
   'connection',
