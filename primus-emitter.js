@@ -1,41 +1,4 @@
-(function (Primus) {
-
-var define = define || null;
-var require = require || null;
-// Super simple require system 
-(function () {
-
-// Store our repository in private variables in this closure.
-var defs = {},
-    modules = {};
-
-// When the user defines a module's setup function, store it here.
-define = function define(name, fn) {
-  defs[name] = fn;
-}
-
-var realRequire = typeof require !== "undefined" && require;
-// The first time a module is used, it's description is executed and cached.
-require = function require(name) {
-  if (modules.hasOwnProperty(name)) return modules[name];
-  if (defs.hasOwnProperty(name)) {
-    var exports = modules[name] = {};
-    var module = {exports:exports};
-    var fn = defs[name];
-    fn(module, exports);
-    return modules[name] = module.exports;
-  }
-  if (realRequire) {
-    return realRequire(name);
-  }
-  throw new Error("Can't find module " + name);
-}
-
-}());
-
-
-define('./emitter', function (module, exports) {
-
+(function(){var global = this;function debug(){return debug};function require(p, parent){ var path = require.resolve(p) , mod = require.modules[path]; if (!mod) throw new Error('failed to require "' + p + '" from ' + parent); if (!mod.exports) { mod.exports = {}; mod.call(mod.exports, mod, mod.exports, require.relative(path), global); } return mod.exports;}require.modules = {};require.resolve = function(path){ var orig = path , reg = path + '.js' , index = path + '/index.js'; return require.modules[reg] && reg || require.modules[index] && index || orig;};require.register = function(path, fn){ require.modules[path] = fn;};require.relative = function(parent) { return function(p){ if ('debug' == p) return debug; if ('.' != p.charAt(0)) return require(p); var path = parent.split('/') , segs = p.split('/'); path.pop(); for (var i = 0; i < segs.length; i++) { var seg = segs[i]; if ('..' == seg) path.pop(); else if ('.' != seg) path.push(seg); } return require(path.join('/'), parent); };};require.register("emitter.js", function(module, exports, require, global){
 /**
  * Event packets.
  */
@@ -234,11 +197,7 @@ Emitter.prototype.onack = function (packet) {
 Emitter.packets = packets;
 Emitter.blacklist = events;
 
-});
-
-
-define('primus-emitter', function (module, exports) {
-
+});require.register("index.js", function(module, exports, require, global){
 /**
  * Module dependencies.
  */
@@ -331,8 +290,5 @@ PrimusEmitter.Spark = function (Spark) {
 
 // Expose Emitter
 PrimusEmitter.Emitter = Emitter;
-});
-
-require('primus-emitter')(Primus);
-
-})(Primus);
+});var exp = require('index.js');if ("undefined" != typeof module) module.exports = exp;else PrimusEmitter = exp;
+})();

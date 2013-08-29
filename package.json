@@ -33,6 +33,6 @@
     "expect.js": "*",
     "primus": "git://github.com/3rd-Eden/primus.git",
     "ws": "~0.4.27",
-    "embedder": "0.0.2"
+    "browserbuild": "*"
   }
 }

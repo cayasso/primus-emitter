@@ -2,6 +2,7 @@
  * Module dependencies.
  */
 
+var exp = 'PrimusEmitter = exp;';
 var fs = require('fs');
 var file = __dirname + '/primus-emitter.js';
 var library = fs.readFileSync(file, 'utf-8');
@@ -17,7 +18,7 @@ exports.server = function server(primus, options) {
   PrimusEmitter(primus, options);
 };
 
-exports.library = library;
 exports.client = function(){};
+exports.library = library.replace(exp, 'exp(Primus);');
 exports.Emitter = PrimusEmitter.Emitter;
 exports.PrimusEmitter = PrimusEmitter;
