@@ -64,7 +64,7 @@ primus.on('open', function () {
   });
 
   // send message to server
-  spark.emit('sport', 'ping-pong');
+  primus.emit('sport', 'ping-pong');
 
 });
 
