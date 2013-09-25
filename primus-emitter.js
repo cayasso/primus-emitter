@@ -13,10 +13,13 @@ var packets = {
  */
 
 var events = [
+  'log',
   'end',
+  'pong',
   'open',
   'data',
   'error',
+  'close',
   'online',
   'offline',
   'timeout',
@@ -24,7 +27,11 @@ var events = [
   'reconnect',
   'reconnecting',
   'connection',
-  'disconnection'
+  'disconnection',
+  'leaveallrooms',
+  'roomserror',
+  'leaveroom',
+  'joinroom'
 ];
 
 // shortcut to slice
