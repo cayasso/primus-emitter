@@ -1,301 +1,289 @@
-(function(){var global = this;function debug(){return debug};function require(p, parent){ var path = require.resolve(p) , mod = require.modules[path]; if (!mod) throw new Error('failed to require "' + p + '" from ' + parent); if (!mod.exports) { mod.exports = {}; mod.call(mod.exports, mod, mod.exports, require.relative(path), global); } return mod.exports;}require.modules = {};require.resolve = function(path){ var orig = path , reg = path + '.js' , index = path + '/index.js'; return require.modules[reg] && reg || require.modules[index] && index || orig;};require.register = function(path, fn){ require.modules[path] = fn;};require.relative = function(parent) { return function(p){ if ('debug' == p) return debug; if ('.' != p.charAt(0)) return require(p); var path = parent.split('/') , segs = p.split('/'); path.pop(); for (var i = 0; i < segs.length; i++) { var seg = segs[i]; if ('..' == seg) path.pop(); else if ('.' != seg) path.push(seg); } return require(path.join('/'), parent); };};require.register("emitter.js", function(module, exports, require, global){
-/**
- * Event packets.
- */
+var PrimusEmitter = (function(){
 
-var packets = {
-  EVENT:  0,
-  ACK:    1
-};
+  'user strict';
 
-/**
- * Blacklisted events.
- */
+  /**
+   * Event packets.
+   */
 
-var events = [
-  'log',
-  'end',
-  'pong',
-  'open',
-  'data',
-  'error',
-  'close',
-  'online',
-  'offline',
-  'timeout',
-  'initialised',
-  'reconnect',
-  'reconnecting',
-  'connection',
-  'disconnection',
-  'leaveallrooms',
-  'roomserror',
-  'leaveroom',
-  'joinroom'
-];
-
-// shortcut to slice
-var slice = [].slice;
-
-// events regex
-var evRE = new RegExp('^(' + events.join('|') + ')$');
-
-/**
- * Expose `Emitter`.
- */
-
-module.exports = Emitter;
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
-
-function Emitter(conn) {
-  if (!(this instanceof Emitter)) return new Emitter(conn);
-  this.ids = 1;
-  this.acks = {};
-  this.conn = conn;
-  if (this.conn) this.bind();
-}
-
-/**
- * Bind `Emitter` events.
- *
- * @return {Emitter} self
- * @api private
- */
-
-Emitter.prototype.bind = function () {
-  var em = this;
-  this.conn.on('data', function (data) {
-    em.ondata.call(em, data);
-  });
-  return this;
-};
-
-/**
- * Called with incoming transport data.
- *
- * @param {Object} packet
- * @return {Emitter} self
- * @api private
- */
-
-Emitter.prototype.ondata = function (packet) {
-  switch (packet.type) {
-    case packets.EVENT:
-      this.onevent(packet);
-      break;
-    case packets.ACK:
-      this.onack(packet);
-      break;
-  }
-};
-
-/**
- * Emits a message.
- *
- * @return {Socket} self
- * @api public
- */
-
-Emitter.prototype.emit = function (ev) {
-  if (this.isReservedEvent(ev)) {
-    this.conn.__emit__.apply(this.conn, arguments);
-  } else {
-    var args = slice.call(arguments);
-    this.conn.write(this.packet(args));
-  }
-  return this;
-};
-
-/**
- * Prepare packet for emitting.
- *
- * @param {Array} arguments
- * @return {Object} packet
- * @api private
- */
-
-Emitter.prototype.packet = function (args) {
-  var packet = { type: packets.EVENT, data: args };
-  // access last argument to see if it's an ACK callback
-  if ('function' == typeof args[args.length - 1]) {
-    var id = this.ids++;
-    if (this.acks) {
-      this.acks[id] = args.pop();
-      packet.id = id;
-    }
-  }
-  return packet;
-};
-
-/**
- * Check if the event is not a primus reserved one.
- *
- * @param {String} event
- * @return {Boolean}
- * @api private
- */
-
-Emitter.prototype.isReservedEvent = function (ev) {
-  return (/^(incoming::|outgoing::)/.test(ev) || evRE.test(ev));
-},
-
-/**
- * Called upon event packet.
- *
- * @param {Object} packet object
- * @api private
- */
-
-Emitter.prototype.onevent = function (packet) {
-  var args = packet.data || [];
-  if (null != packet.id) {
-    args.push(this.ack(packet.id));
-  }
-  this.conn.__emit__.apply(this.conn, args);
-  return this;
-};
-
-/**
- * Produces an ack callback to emit with an event.
- *
- * @param {Number} packet id
- * @return {Function}
- * @api private
- */
-
-Emitter.prototype.ack = function (id) {
-  var conn = this.conn;
-  var sent = false;
-  return function(){
-    // prevent double callbacks
-    if (sent) return;
-    conn.write({
-      id: id,
-      type: packets.ACK,
-      data: slice.call(arguments)
-    });
+  var packets = {
+    EVENT:  0,
+    ACK:    1
   };
-};
-
-/**
- * Called upon ack packet.
- *
- * @return {Emitter} self
- * @api private
- */
-
-Emitter.prototype.onack = function (packet) {
-  var ack = this.acks[packet.id];
-  if ('function' == typeof ack) {
-    ack.apply(this, packet.data);
-    delete this.acks[packet.id];
-  } else {
-    //console.log('bad ack %s', packet.id);
-  }
-  return this;
-};
-
-// Expose packets & blacklist
-Emitter.packets = packets;
-Emitter.blacklist = events;
-
-});require.register("index.js", function(module, exports, require, global){
-/**
- * Module dependencies.
- */
-
-var Emitter = require('./emitter');
-
-/**
- * Expose `PrimusEmitter`.
- */
-
-module.exports = PrimusEmitter;
-
-/**
- * This method initialize PrimusEmitter on primus instance.
- *
- * @param {Primus} primus Primus instance.
- * @param {Object} options The options.
- * @api public
- */
-
-function PrimusEmitter (primus, options) {
-  options = options || {};
-
-  // Extending primus.Spark
-  PrimusEmitter.Spark(primus.Spark || primus);
-  return this;
-}
-
-/**
- * Extend a Spark to add Rooms capabilities.
- * 
- * @return {Spark} It returns a primus.Spark
- * @api public
- */
-
-PrimusEmitter.Spark = function (Spark) {
-
-  // return if this already was extended with Emitter;
-  if (Spark.prototype.__Emitter__) return Spark;
 
   /**
-   * `Primus#emit` reference.
+   * Blacklisted events.
    */
 
-  var emit = Spark.prototype.emit;
+  var events = [
+    'log',
+    'end',
+    'pong',
+    'open',
+    'data',
+    'error',
+    'close',
+    'online',
+    'offline',
+    'timeout',
+    'initialised',
+    'reconnect',
+    'reconnecting',
+    'connection',
+    'disconnection',
+    'leaveallrooms',
+    'roomserror',
+    'leaveroom',
+    'joinroom'
+  ];
+
+  // shortcut to slice
+  var slice = [].slice;
+
+  // events regex
+  var evRE = new RegExp('^(' + events.join('|') + ')$');
 
   /**
-   * `Primus#initialise` reference.
-   */
-
-  var init = Spark.prototype.initialise;
-
-  /**
-   * Adding reference to Emitter.
-   */
-
-  Spark.prototype.__Emitter__ = Emitter;
-
-  /**
-   * Initialise the Primus and setup all
-   * parsers and internal listeners.
+   * Initialize a new `Emitter`.
    *
+   * @api public
+   */
+
+  function Emitter(conn) {
+    if (!(this instanceof Emitter)) return new Emitter(conn);
+    this.ids = 1;
+    this.acks = {};
+    this.conn = conn;
+    if (this.conn) this.bind();
+  }
+
+  /**
+   * Bind `Emitter` events.
+   *
+   * @return {Emitter} self
    * @api private
    */
 
-  Spark.prototype.initialise = function () {
-    this.__emit__ = emit;
-    this.emitter = new Emitter(this);
-    init.apply(this, arguments);
+  Emitter.prototype.bind = function () {
+    var em = this;
+    this.conn.on('data', function (data) {
+      em.ondata.call(em, data);
+    });
     return this;
   };
 
   /**
-   * Emits to this Spark.
+   * Called with incoming transport data.
+   *
+   * @param {Object} packet
+   * @return {Emitter} self
+   * @api private
+   */
+
+  Emitter.prototype.ondata = function (packet) {
+    switch (packet.type) {
+      case packets.EVENT:
+        this.onevent(packet);
+        break;
+      case packets.ACK:
+        this.onack(packet);
+        break;
+    }
+  };
+
+  /**
+   * Emits a message.
    *
    * @return {Socket} self
    * @api public
    */
 
-  Spark.prototype.emit = function (ev) {   
-    // ignore newListener event to avoid this error in node 0.8
-    // https://github.com/cayasso/primus-emitter/issues/3
-    if ('newListener' === ev) return this;
-    this.emitter.emit.apply(this.emitter, arguments);
+  Emitter.prototype.emit = function (ev) {
+    if (this.isReservedEvent(ev)) {
+      this.conn.__emit__.apply(this.conn, arguments);
+    } else {
+      var args = slice.call(arguments);
+      this.conn.write(this.packet(args));
+    }
     return this;
   };
 
-  return Spark;
-};
+  /**
+   * Prepare packet for emitting.
+   *
+   * @param {Array} arguments
+   * @return {Object} packet
+   * @api private
+   */
 
-// Expose Emitter
-PrimusEmitter.Emitter = Emitter;
-});var exp = require('index.js');if ("undefined" != typeof module) module.exports = exp;else PrimusEmitter = exp;
-})();
+  Emitter.prototype.packet = function (args) {
+    var packet = { type: packets.EVENT, data: args };
+    // access last argument to see if it's an ACK callback
+    if ('function' == typeof args[args.length - 1]) {
+      var id = this.ids++;
+      if (this.acks) {
+        this.acks[id] = args.pop();
+        packet.id = id;
+      }
+    }
+    return packet;
+  };
+
+  /**
+   * Check if the event is not a primus reserved one.
+   *
+   * @param {String} event
+   * @return {Boolean}
+   * @api private
+   */
+
+  Emitter.prototype.isReservedEvent = function (ev) {
+    return (/^(incoming::|outgoing::)/.test(ev) || evRE.test(ev));
+  },
+
+  /**
+   * Called upon event packet.
+   *
+   * @param {Object} packet object
+   * @api private
+   */
+
+  Emitter.prototype.onevent = function (packet) {
+    var args = packet.data || [];
+    if (null != packet.id) {
+      args.push(this.ack(packet.id));
+    }
+    this.conn.__emit__.apply(this.conn, args);
+    return this;
+  };
+
+  /**
+   * Produces an ack callback to emit with an event.
+   *
+   * @param {Number} packet id
+   * @return {Function}
+   * @api private
+   */
+
+  Emitter.prototype.ack = function (id) {
+    var conn = this.conn;
+    var sent = false;
+    return function(){
+      // prevent double callbacks
+      if (sent) return;
+      conn.write({
+        id: id,
+        type: packets.ACK,
+        data: slice.call(arguments)
+      });
+    };
+  };
+
+  /**
+   * Called upon ack packet.
+   *
+   * @return {Emitter} self
+   * @api private
+   */
+
+  Emitter.prototype.onack = function (packet) {
+    var ack = this.acks[packet.id];
+    if ('function' == typeof ack) {
+      ack.apply(this, packet.data);
+      delete this.acks[packet.id];
+    } else {
+      //console.log('bad ack %s', packet.id);
+    }
+    return this;
+  };
+
+  // Expose packets & blacklist
+  Emitter.packets = packets;
+  Emitter.blacklist = events;
+
+
+  /**
+   * This method initialize PrimusEmitter on primus instance.
+   *
+   * @param {Primus} primus Primus instance.
+   * @param {Object} options The options.
+   * @api public
+   */
+
+  function PrimusEmitter (primus, options) {
+    options = options || {};
+
+    // Extending primus.Spark
+    PrimusEmitter.Spark(primus.Spark || primus);
+    return this;
+  }
+
+  /**
+   * Extend a Spark to add Rooms capabilities.
+   * 
+   * @return {Spark} It returns a primus.Spark
+   * @api public
+   */
+
+  PrimusEmitter.Spark = function (Spark) {
+
+    // return if this already was extended with Emitter;
+    if (Spark.prototype.__Emitter__) return Spark;
+
+    /**
+     * `Primus#emit` reference.
+     */
+
+    var emit = Spark.prototype.emit;
+
+    /**
+     * `Primus#initialise` reference.
+     */
+
+    var init = Spark.prototype.initialise;
+
+    /**
+     * Adding reference to Emitter.
+     */
+
+    Spark.prototype.__Emitter__ = Emitter;
+
+    /**
+     * Initialise the Primus and setup all
+     * parsers and internal listeners.
+     *
+     * @api private
+     */
+
+    Spark.prototype.initialise = function () {
+      this.__emit__ = emit;
+      this.emitter = new Emitter(this);
+      init.apply(this, arguments);
+      return this;
+    };
+
+    /**
+     * Emits to this Spark.
+     *
+     * @return {Socket} self
+     * @api public
+     */
+
+    Spark.prototype.emit = function (ev) {   
+      // ignore newListener event to avoid this error in node 0.8
+      // https://github.com/cayasso/primus-emitter/issues/3
+      if ('newListener' === ev) return this;
+      this.emitter.emit.apply(this.emitter, arguments);
+      return this;
+    };
+
+    return Spark;
+  };
+
+
+  return PrimusEmitter;
+
+}).call(this);
+
+PrimusEmitter(Primus);
+

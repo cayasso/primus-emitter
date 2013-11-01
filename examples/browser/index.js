@@ -30,6 +30,6 @@ primus.on('connection', function connection(spark) {
 });
 
 // Start server listening
-server.listen(process.env.PORT || 8081, function(){
-  console.log('\033[96mlistening on localhost:8081 \033[39m');
+server.listen(process.env.PORT || 8082, function(){
+  console.log('\033[96mlistening on localhost:8082 \033[39m');
 });

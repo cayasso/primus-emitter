@@ -32,7 +32,6 @@
     "mocha": "*",
     "expect.js": "*",
     "primus": "git://github.com/3rd-Eden/primus.git",
-    "ws": "~0.4.27",
-    "browserbuild": "*"
+    "ws": "~0.4.27"
   }
 }
