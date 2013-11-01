@@ -98,6 +98,7 @@ $ make test
 
  * [primus-rooms](https://github.com/cayasso/primus-rooms)
  * [primus-multiplex](https://github.com/cayasso/primus-multiplex)
+ * [primus-resource](https://github.com/cayasso/primus-resource)
 
 ## License
 
