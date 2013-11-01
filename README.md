@@ -5,6 +5,18 @@
 
 Node.JS module that adds emitter capabilities to [Primus](https://github.com/3rd-Eden/primus).
 
+
+## Version 2.x (IMPORTANT)
+
+As off version 2+ the `emit` method will no longer be supported, instead use the `send` method, this is because `emit` is widely used by Primus for internal events, so this required some hacks and also an event black list to maintain for  avoiding event collisions, for the sake of simplicity and the sake of maintainability I decided to drop the method, the new method `send` works the same as emit, and it removes hacks and the event blacklist to support. 
+
+You can always go back and install the previous version if you really need to.
+
+```bash
+npm install primus-emitter@1.1.0
+```
+
+
 ## Instalation
 
 ```
@@ -29,10 +41,10 @@ primus.use('emitter', Emitter);
 primus.on('connection', function (spark) {
 
   // emit hi event
-  spark.emit('hi', 'good morning');
+  spark.send('hi', 'good morning');
 
   // emit to news with ack
-  spark.emit('news', 'good morning', function (data) {
+  spark.send('news', 'good morning', function (data) {
     console.log(data); // => 'by client'
   });
 
@@ -64,7 +76,7 @@ primus.on('open', function () {
   });
 
   // send message to server
-  primus.emit('sport', 'ping-pong');
+  primus.send('sport', 'ping-pong');
 
 });
 
@@ -72,12 +84,12 @@ primus.on('open', function () {
 
 ## API
 
-### spark#emit(event, ..., [fn])
+### spark#send(event, ..., [fn])
 
-Emit an event to server to client or client to server.
+Send an event to server to client or client to server.
 
 ```javascript
-spark.emit('news', 'hi', fn);
+spark.send('news', 'hi', fn);
 ```
 
 ### spark#on(event, fn)
