@@ -2,7 +2,7 @@ var Primus = require('primus');
 var emitter = require('../');
 var http = require('http').Server;
 var expect = require('expect.js');
-var opts = { transformer: 'websockets', parser: 'JSON' };
+var opts = { transformer: 'websockets' };
 
 
 // creates the client
@@ -23,10 +23,10 @@ describe('primus-emitter', function () {
   it('should have required methods', function(done){
     var srv = http();
     var primus = server(srv, opts);
-    //primus.save('test.js');
+    primus.save('test.js');
     srv.listen(function(){
       primus.on('connection', function (spark) {
-        expect(spark.emit).to.be.a('function');
+        expect(spark.send).to.be.a('function');
         expect(spark.on).to.be.a('function');
         done();
       });
@@ -39,7 +39,7 @@ describe('primus-emitter', function () {
     var primus = server(srv, opts);
     srv.listen(function(){
       primus.on('connection', function(spark){
-        spark.emit('news', 'data');
+        spark.send('news', 'data');
       });
       var cl = client(srv, primus);
       cl.on('news', function (data) {
@@ -55,7 +55,7 @@ describe('primus-emitter', function () {
     var msg = { hi: 'hello', num: 123456 };
     srv.listen(function(){
       primus.on('connection', function(spark){
-        spark.emit('news', msg);
+        spark.send('news', msg);
       });
       var cl = client(srv, primus);
       cl.on('news', function (data) {
@@ -71,7 +71,7 @@ describe('primus-emitter', function () {
     var msg = { hi: 'hello', num: 123456 };
     srv.listen(function(){
       primus.on('connection', function(spark){
-        spark.emit('news', msg, function (err, res) {
+        spark.send('news', msg, function (err, res) {
           expect(res).to.be('received');
           expect(err).to.be.eql(null);
           done();
@@ -95,7 +95,7 @@ describe('primus-emitter', function () {
         });
       });
       var cl = client(srv, primus);
-      cl.emit('news', 'data');
+      cl.send('news', 'data');
     });
   });
 
@@ -111,7 +111,7 @@ describe('primus-emitter', function () {
         });
       });
       var cl = client(srv, primus);
-      cl.emit('news', msg);
+      cl.send('news', msg);
     });
   });
 
@@ -126,7 +126,7 @@ describe('primus-emitter', function () {
         });
       });
       var cl = client(srv, primus);
-      cl.emit('news', msg, function (err, res) {
+      cl.send('news', msg, function (err, res) {
         expect(res).to.be('received');
         expect(err).to.be.eql(null);
         done();
