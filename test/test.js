@@ -23,7 +23,7 @@ describe('primus-emitter', function () {
   it('should have required methods', function(done){
     var srv = http();
     var primus = server(srv, opts);
-    //primus.save('test.js');
+    primus.save('test.js');
     srv.listen(function(){
       primus.on('connection', function (spark) {
         expect(spark.send).to.be.a('function');
