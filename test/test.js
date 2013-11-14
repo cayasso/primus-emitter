@@ -167,4 +167,25 @@ describe('primus-emitter', function () {
     });
   });
 
+  it('should ignore reserved primus events', function(done){
+    var srv = http();
+    var primus = server(srv, opts);
+    var events = require('../lib/').Emitter.reservedEvents;
+    var len = events.length;
+    srv.listen(function(){
+      primus.on('connection', function(spark){
+        events.forEach(function(ev){
+          spark.on(ev, function(){
+            done('Should not');
+          });
+        });
+      });
+      var cl = client(srv, primus);
+      events.forEach(function(ev, i){
+        cl.send(ev, 'hi');
+        if (i === (len-1)) done();
+      });
+    });
+  });
+
 });
