@@ -1,3 +1,5 @@
+'use strict';
+
 var Primus = require('primus');
 var emitter = require('../');
 var http = require('http').Server;
