@@ -33,9 +33,9 @@ describe('primus-emitter', function () {
     done();
   });
 
-  it('should have required methods', function(done){
+  it('should have required methods', function (done) {
     //primus.save('test.js');
-    srv.listen(function(){
+    srv.listen(function () {
       primus.on('connection', function (spark) {
         expect(spark.send).to.be.a('function');
         expect(spark.on).to.be.a('function');
@@ -45,9 +45,9 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should emit event from server', function(done){
-    srv.listen(function(){
-      primus.on('connection', function(spark){
+  it('should emit event from server', function (done) {
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
         spark.send('news', 'data');
       });
       var cl = client(srv, primus);
@@ -58,10 +58,10 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should emit object from server', function(done){
+  it('should emit object from server', function (done) {
     var msg = { hi: 'hello', num: 123456 };
-    srv.listen(function(){
-      primus.on('connection', function(spark){
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
         spark.send('news', msg);
       });
       var cl = client(srv, primus);
@@ -72,10 +72,10 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should support ack from server', function(done){
+  it('should support ack from server', function (done) {
     var msg = { hi: 'hello', num: 123456 };
-    srv.listen(function(){
-      primus.on('connection', function(spark){
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
         spark.send('news', msg, function (err, res) {
           expect(res).to.be('received');
           expect(err).to.be.eql(null);
@@ -89,9 +89,9 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should emit event from client', function(done){
-    srv.listen(function(){
-      primus.on('connection', function(spark){
+  it('should emit event from client', function (done) {
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
         spark.on('news', function (data) {
           expect(data).to.be('data');
           done();
@@ -102,10 +102,10 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should emit object from client', function(done){
+  it('should emit object from client', function (done) {
     var msg = { hi: 'hello', num: 123456 };
-    srv.listen(function(){
-      primus.on('connection', function(spark){
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
         spark.on('news', function (data) {
           expect(data).to.be.eql(msg);
           done();
@@ -116,10 +116,10 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should support ack from client', function(done){
+  it('should support ack from client', function (done) {
     var msg = { hi: 'hello', num: 123456 };
-    srv.listen(function(){ 
-      primus.on('connection', function(spark){
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
         spark.on('news', function (data, fn) {
           fn(null, 'received');
         });
@@ -133,10 +133,10 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should support broadcasting from server', function(done){
+  it('should support broadcasting from server', function (done) {
     var total = 0;
-    srv.listen(function(){
-      primus.on('connection', function(spark){
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
         if (3 === ++total) primus.send('news', 'hi');
       });
       var cl1 = client(srv, primus)
@@ -164,13 +164,13 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should ignore reserved primus events', function(done){
+  it('should ignore reserved primus events', function (done) {
     var events = require('../lib/').Emitter.reservedEvents
       , len = events.length;
-    srv.listen(function(){
-      primus.on('connection', function(spark){
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
         events.forEach(function(ev){
-          spark.on(ev, function(){
+          spark.on(ev, function () {
             done('Should not');
           });
         });
