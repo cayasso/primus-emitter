@@ -164,7 +164,7 @@ describe('primus-emitter', function () {
       });
 
       function finish() {
-        if (1 < --total) done();
+        if (1 > --total) done();
       }
     });
   });
