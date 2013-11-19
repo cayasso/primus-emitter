@@ -1,11 +1,12 @@
 'use strict';
 
-var Primus = require('primus');
-var emitter = require('../');
-var http = require('http').Server;
-var expect = require('expect.js');
-var opts = { transformer: 'websockets' };
-
+var Primus = require('primus')
+  , emitter = require('../')
+  , http = require('http').Server
+  , expect = require('expect.js')
+  , opts = { transformer: 'websockets' }
+  , primus
+  , srv;
 
 // creates the client
 function client(srv, primus, port){
@@ -16,15 +17,23 @@ function client(srv, primus, port){
 
 // creates the server
 function server(srv, opts) {
-  // use rooms plugin
   return Primus(srv, opts).use('emitter', emitter);
 }
 
 describe('primus-emitter', function () {
 
+  beforeEach(function beforeEach(done) {
+    srv = http();
+    primus = server(srv, opts);
+    done();
+  });
+
+  afterEach(function afterEach(done) {
+    srv.close();
+    done();
+  });
+
   it('should have required methods', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
     //primus.save('test.js');
     srv.listen(function(){
       primus.on('connection', function (spark) {
@@ -37,8 +46,6 @@ describe('primus-emitter', function () {
   });
 
   it('should emit event from server', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
     srv.listen(function(){
       primus.on('connection', function(spark){
         spark.send('news', 'data');
@@ -52,8 +59,6 @@ describe('primus-emitter', function () {
   });
 
   it('should emit object from server', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
     var msg = { hi: 'hello', num: 123456 };
     srv.listen(function(){
       primus.on('connection', function(spark){
@@ -68,8 +73,6 @@ describe('primus-emitter', function () {
   });
 
   it('should support ack from server', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
     var msg = { hi: 'hello', num: 123456 };
     srv.listen(function(){
       primus.on('connection', function(spark){
@@ -87,8 +90,6 @@ describe('primus-emitter', function () {
   });
 
   it('should emit event from client', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
     srv.listen(function(){
       primus.on('connection', function(spark){
         spark.on('news', function (data) {
@@ -102,8 +103,6 @@ describe('primus-emitter', function () {
   });
 
   it('should emit object from client', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
     var msg = { hi: 'hello', num: 123456 };
     srv.listen(function(){
       primus.on('connection', function(spark){
@@ -118,8 +117,6 @@ describe('primus-emitter', function () {
   });
 
   it('should support ack from client', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
     var msg = { hi: 'hello', num: 123456 };
     srv.listen(function(){ 
       primus.on('connection', function(spark){
@@ -137,16 +134,14 @@ describe('primus-emitter', function () {
   });
 
   it('should support broadcasting from server', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
     var total = 0;
     srv.listen(function(){
       primus.on('connection', function(spark){
         if (3 === ++total) primus.send('news', 'hi');
       });
-      var cl1 = client(srv, primus);
-      var cl2 = client(srv, primus);
-      var cl3 = client(srv, primus);
+      var cl1 = client(srv, primus)
+        , cl2 = client(srv, primus)
+        , cl3 = client(srv, primus);
 
       cl1.on('news', function (msg) {
         expect(msg).to.be('hi');
@@ -170,10 +165,8 @@ describe('primus-emitter', function () {
   });
 
   it('should ignore reserved primus events', function(done){
-    var srv = http();
-    var primus = server(srv, opts);
-    var events = require('../lib/').Emitter.reservedEvents;
-    var len = events.length;
+    var events = require('../lib/').Emitter.reservedEvents
+      , len = events.length;
     srv.listen(function(){
       primus.on('connection', function(spark){
         events.forEach(function(ev){
