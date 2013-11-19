@@ -169,7 +169,7 @@ describe('primus-emitter', function () {
       , len = events.length;
     srv.listen(function () {
       primus.on('connection', function (spark) {
-        events.forEach(function(ev){
+        events.forEach(function (ev) {
           spark.on(ev, function () {
             done('Should not');
           });
