@@ -164,6 +164,11 @@ describe('primus-emitter', function () {
     });
   });
 
+  it('should return Primus instance when broadcasting from server', function () {
+    expect(primus.send('news')).to.be.a(Primus);
+    srv.listen();
+  });
+
   it('should ignore reserved primus events', function (done) {
     var events = require('../lib/').Emitter.reservedEvents
       , len = events.length;
