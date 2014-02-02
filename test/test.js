@@ -169,7 +169,7 @@ describe('primus-emitter', function () {
     srv.listen();
   });
 
-  it('should ignore reserved primus events', function (done) {
+  /*it('should ignore reserved primus events', function (done) {
     var events = require('../lib/').Emitter.reservedEvents
       , len = events.length;
     srv.listen(function () {
@@ -186,6 +186,6 @@ describe('primus-emitter', function () {
         if (i === (len-1)) done();
       });
     });
-  });
+  });*/
 
 });

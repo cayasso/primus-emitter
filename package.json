@@ -30,7 +30,7 @@
   "devDependencies": {
     "mocha": "*",
     "expect.js": "*",
-    "primus": "*",
+    "primus": "git://github.com/3rd-Eden/primus.git",
     "ws": "~0.4.27"
   }
 }
