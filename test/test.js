@@ -34,7 +34,7 @@ describe('primus-emitter', function () {
   });
 
   it('should have required methods', function (done) {
-    //primus.save('test.js');
+    primus.save('testt.js');
     srv.listen(function () {
       primus.on('connection', function (spark) {
         expect(spark.send).to.be.a('function');
@@ -169,8 +169,8 @@ describe('primus-emitter', function () {
     srv.listen();
   });
 
-  /*it('should ignore reserved primus events', function (done) {
-    var events = require('../lib/').Emitter.reservedEvents
+  it('should ignore reserved primus events', function (done) {
+    var events = require('../lib/').Emitter.events
       , len = events.length;
     srv.listen(function () {
       primus.on('connection', function (spark) {
@@ -181,11 +181,14 @@ describe('primus-emitter', function () {
         });
       });
       var cl = client(srv, primus);
-      events.forEach(function(ev, i){
+      events.forEach(function (ev, i) {
         cl.send(ev, 'hi');
         if (i === (len-1)) done();
       });
     });
-  });*/
+  });
 
 });
+
+
+
