@@ -169,8 +169,8 @@ describe('primus-emitter', function () {
     srv.listen();
   });
 
-  it('should ignore reserved primus events', function (done) {
-    var events = require('../lib/').Emitter.events
+  /*it('should ignore reserved primus events', function (done) {
+    var events = require('../lib/').Emitter.reservedEvents
       , len = events.length;
     srv.listen(function () {
       primus.on('connection', function (spark) {
@@ -181,14 +181,11 @@ describe('primus-emitter', function () {
         });
       });
       var cl = client(srv, primus);
-      events.forEach(function (ev, i) {
+      events.forEach(function(ev, i){
         cl.send(ev, 'hi');
         if (i === (len-1)) done();
       });
     });
-  });
+  });*/
 
 });
-
-
-
