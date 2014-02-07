@@ -5,10 +5,12 @@
 
 Node.JS module that adds emitter capabilities to [Primus](https://github.com/3rd-Eden/primus).
 
+## Compatibility
+####This project is currently compatible with 1.x.x versions of Primus, it is not compatible with the latest [2.0.+ release](https://github.com/primus/primus/releases/tag/2.0.0), changes are in the works for getting all plugins aligned with the latest Primus. Stay tuned!!!####
 
 ## Version 2.x (IMPORTANT)
 
-As off version 2+ the `emit` method will no longer be supported, instead use the `send` method, this is because `emit` is widely used by Primus for internal events, so this required some hacks and also an event black list to maintain for  avoiding event collisions, for the sake of simplicity and the sake of maintainability I decided to drop the method, the new method `send` works the same as emit, and it removes hacks and the event blacklist to support.
+As off `primus-emitter` version 2+ the `emit` method will no longer be supported, instead use the `send` method, this is because `emit` is widely used by Primus for internal events, so this required some hacks and also an event black list to maintain for  avoiding event collisions, for the sake of simplicity and the sake of maintainability I decided to drop the method, the new method `send` works the same as emit, and it removes hacks and the event blacklist to support.
 
 Because of this change, `primus-emitter` 2.0 might not work well with versions `1.x` of `primus-rooms` and `primus-multiplex`, these modules will be updated to 2.x version making them also compatible with this version.
 
