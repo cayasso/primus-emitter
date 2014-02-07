@@ -29,7 +29,7 @@ describe('primus-emitter', function () {
   });
 
   afterEach(function afterEach(done) {
-    srv.close();
+    primus.end();
     done();
   });
 
@@ -37,11 +37,13 @@ describe('primus-emitter', function () {
     //primus.save('testt.js');
     srv.listen(function () {
       primus.on('connection', function (spark) {
+        expect(spark.reserved).to.be.a('function');
         expect(spark.send).to.be.a('function');
         expect(spark.on).to.be.a('function');
         done();
       });
-      client(srv, primus);
+      var cl = client(srv, primus);
+      expect(cl.reserved).to.be.a('function');
     });
   });
 
@@ -164,9 +166,51 @@ describe('primus-emitter', function () {
     });
   });
 
-  it('should return Primus instance when broadcasting from server', function () {
+  it('should return `Primus` instance when broadcasting from server', function () {
     expect(primus.send('news')).to.be.a(Primus);
     srv.listen();
+  });
+
+  it('`Client#send` should not trigger `Spark` reserved events', function (done) {
+    var events = Object.keys(primus.Spark.prototype.reserved.events);
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
+        events.forEach(function (ev) {
+          spark.on(ev, function (data) {
+            if ('not ignored' === data) {
+              done(new Error('should be ignored'));
+            }
+          });
+        });
+      });
+    });
+    var cl = client(srv, primus);
+    cl.on('open', function () {
+      events.forEach(function (ev) {
+        cl.send(ev, 'not ignored');
+      });
+      done();
+    });
+  });
+
+  it('`Spark#send` should not trigger client reserved events', function (done) {
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
+        events.forEach(function (ev) {
+          spark.send(ev, 'not ignored');
+        });
+        done();
+      });
+    });
+    var cl = client(srv, primus)
+      , events = Object.keys(cl.reserved.events);
+    events.forEach(function (ev) {
+      cl.on(ev, function (data) {
+        if ('not ignored' === data) {
+          done(new Error('should be ignored'));
+        }
+      });
+    });
   });
 
 });
