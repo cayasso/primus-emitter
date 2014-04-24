@@ -13,7 +13,7 @@ Node.JS module that adds emitter capabilities to [Primus](https://github.com/3rd
 $ npm install primus-emitter@2.0.5
 ```
 
-## Instalation
+## Installation
 
 ```
 $ npm install primus-emitter
@@ -68,7 +68,7 @@ primus.on('open', function () {
 
   // respond ack to server
   primus.on('news', function (data, fn) {
-    fn('by client')
+    fn('by client');
   });
 
   // send message to server
