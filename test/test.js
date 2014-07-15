@@ -213,4 +213,18 @@ describe('primus-emitter', function () {
     });
   });
 
+  it('should only listen to event once when binding with `once`', function (done) {
+    srv.listen(function () {
+      primus.on('connection', function (spark) {
+        spark.once('news', function (data) {
+          expect(data).to.be('once');
+          done();
+        });
+      });
+      var cl = client(srv, primus);
+      cl.send('news', 'once');
+      cl.send('news', 'once');
+    });
+  });
+
 });
