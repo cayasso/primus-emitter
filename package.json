@@ -1,6 +1,6 @@
 {
   "name": "primus-emitter",
-  "version": "3.0.3", 
+  "version": "3.0.3",
   "description": "Simple emitter wrapper for Primus",
   "author": "Jonathan Brumley <cayasso@gmail.com>",
   "homepage": "https://github.com/cayasso/primus-emitter",
@@ -25,12 +25,12 @@
     "subscribe"
   ],
   "license": "MIT",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "mocha": "*",
     "expect.js": "*",
+    "mocha": "*",
+    "pre-commit": "0.0.9",
     "primus": "git://github.com/primus/primus.git",
-    "ws": "~0.4.27"
+    "ws": "^0.4.32"
   }
 }
