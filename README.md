@@ -1,7 +1,8 @@
 # Primus Emitter
 
-[![Build Status](https://travis-ci.org/cayasso/primus-emitter.svg?branch=master)](https://travis-ci.org/cayasso/primus-emitter)
-[![NPM version](https://badge.fury.io/js/primus-emitter.svg)](http://badge.fury.io/js/primus-emitter)
+[![Build Status](https://img.shields.io/travis/cayasso/primus-emitter/master.svg)](https://travis-ci.org/cayasso/primus-emitter)
+[![NPM version](https://img.shields.io/npm/v/primus-emitter.svg)](https://www.npmjs.com/package/primus-emitter)
+[![Coverage Status](https://img.shields.io/coveralls/cayasso/primus-emitter/master.svg)](https://coveralls.io/r/cayasso/primus-emitter)
 
 Node.JS module that adds emitter capabilities to [Primus](https://github.com/3rd-Eden/primus).
 
