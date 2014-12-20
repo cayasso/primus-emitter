@@ -1,4 +1,7 @@
-node_modules
+node_modules/
+coverage/
+examples/
+test/
+.DS_Store
 npm-debug.log
-coverage.html
-lib-cov/
+Makefile
