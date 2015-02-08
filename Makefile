@@ -5,7 +5,7 @@ coverage:
 		--require blanket --reporter html-cov > coverage/coverage.html
 
 test:
-	@node_modules/.bin/mocha $(MOCHA_OPTS) --reporter spec
+	@node_modules/.bin/mocha $(MOCHA_OPTS)
 
 test-travis: test
 	@mkdir -p coverage && node_modules/.bin/mocha $(MOCHA_OPTS) \
