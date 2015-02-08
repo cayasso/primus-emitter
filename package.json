@@ -33,9 +33,9 @@
     "expect.js": "*",
     "mocha": "*",
     "mocha-lcov-reporter": "0.0.1",
-    "pre-commit": "0.0.9",
-    "primus": "git://github.com/primus/primus.git",
-    "ws": "^0.6.3"
+    "pre-commit": "^1.0.2",
+    "primus": "^2.4.12",
+    "ws": "^0.7.1"
   },
   "config": {
     "blanket": {
