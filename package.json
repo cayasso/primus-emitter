@@ -32,7 +32,7 @@
     "blanket": "^1.1.6",
     "expect.js": "*",
     "mocha": "*",
-    "mocha-lcov-reporter": "0.0.1",
+    "mocha-lcov-reporter": "0.0.2",
     "pre-commit": "^1.0.2",
     "primus": "^2.4.12",
     "ws": "^0.7.1"
