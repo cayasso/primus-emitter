@@ -4,7 +4,7 @@
 [![NPM version](https://img.shields.io/npm/v/primus-emitter.svg)](https://www.npmjs.com/package/primus-emitter)
 [![Coverage Status](https://img.shields.io/coveralls/cayasso/primus-emitter/master.svg)](https://coveralls.io/r/cayasso/primus-emitter)
 
-Node.JS module that adds emitter capabilities to [Primus](https://github.com/3rd-Eden/primus).
+Node.JS module that adds emitter capabilities to [Primus](https://github.com/primus/primus).
 
 ## Installation
 
