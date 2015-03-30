@@ -6,14 +6,6 @@
 
 Node.JS module that adds emitter capabilities to [Primus](https://github.com/3rd-Eden/primus).
 
-## Compatibility
-
-`primus-emitter@3.x.x` is now compatible with [primus@2.x.x](https://github.com/primus/primus/releases/tag/2.0.0) series, if for some reason you need to continue using an old version of `primus` then you can always go back and install a previous version of `primus-emitter` like so:
-
-```bash
-$ npm install primus-emitter@2.0.5
-```
-
 ## Installation
 
 ```
