@@ -4,15 +4,17 @@ var Primus = require('primus')
   , emitter = require('../')
   , http = require('http').Server
   , expect = require('expect.js')
-  , opts = { transformer: 'websockets' }
   , primus
   , srv;
 
 // creates the client
-function client(srv, primus, port){
+function client(srv, primus) {
   var addr = srv.address();
-  var url = 'http://' + addr.address + ':' + (port || addr.port);
-  return new primus.Socket(url);
+
+  if (!addr) throw new Error('Server is not listening');
+  if (addr.family === 'IPv6') addr.address = '[' + addr.address + ']';
+
+  return new primus.Socket('http://' + addr.address + ':' + addr.port);
 }
 
 // creates the server
@@ -24,7 +26,7 @@ describe('primus-emitter', function () {
 
   beforeEach(function beforeEach(done) {
     srv = http();
-    primus = server(srv, opts);
+    primus = server(srv);
     done();
   });
 
