@@ -16,9 +16,8 @@ function client() {
   var addr = srv.address();
 
   if (!addr) throw new Error('Server is not listening');
-  if (addr.family === 'IPv6') addr.address = '[' + addr.address + ']';
 
-  return new Socket('http://' + addr.address + ':' + addr.port);
+  return new Socket('http://localhost:' + addr.port);
 }
 
 beforeEach(function beforeEach(done) {
@@ -215,5 +214,34 @@ describe('primus-emitter', function () {
 
     cl.send('news', 'once');
     cl.send('news', 'once');
+  });
+
+  it('should drop invalid packets', function (done) {
+    primus.on('connection', function (spark) {
+      spark.emitter.onevent = spark.emitter.onack = function () {
+        done(new Error('should not be called'));
+      };
+      spark.on('end', done);
+    });
+
+    client().on('open', function () {
+      this.write({
+        type: emitter.Emitter.packets.EVENT,
+        data: 'foo'
+      });
+
+      this.write({
+        type: emitter.Emitter.packets.ACK,
+        id: '__defineGetter__',
+        data: ['foo']
+      });
+
+      this.write({
+        data: ['foo'],
+        type: 2
+      });
+
+      this.end();
+    });
   });
 });
