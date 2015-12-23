@@ -73,15 +73,15 @@ primus.on('open', function () {
 
 ## API
 
-### spark#send(event, ..., [fn])
+### Spark#send(event, ..., [fn])
 
-Send an event to server to client or client to server.
+Send an event from server to client or from client to server.
 
 ```javascript
 spark.send('news', 'hi', fn);
 ```
 
-### spark#on(event, fn)
+### Spark#on(event, fn)
 
 Listen to incoming events.
 
