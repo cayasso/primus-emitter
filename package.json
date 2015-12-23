@@ -29,13 +29,13 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "blanket": "^1.1.6",
-    "chai": "^3.0.0",
-    "mocha": "*",
-    "mocha-lcov-reporter": "0.0.2",
-    "pre-commit": "^1.0.2",
-    "primus": "^3.0.2",
-    "ws": "^0.7.1"
+    "blanket": "^1.2.1",
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
+    "pre-commit": "^1.1.2",
+    "primus": "^4.0.4",
+    "ws": "^0.8.1"
   },
   "config": {
     "blanket": {
