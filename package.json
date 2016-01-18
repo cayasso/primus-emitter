@@ -35,7 +35,7 @@
     "mocha-lcov-reporter": "^1.0.0",
     "pre-commit": "^1.1.2",
     "primus": "^4.0.4",
-    "ws": "^0.8.1"
+    "ws": "^1.0.1"
   },
   "config": {
     "blanket": {
