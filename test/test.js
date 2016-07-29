@@ -22,7 +22,7 @@ function client() {
 
 beforeEach(function beforeEach(done) {
   srv = http.createServer();
-  primus = new Primus(srv).use('emitter', emitter);
+  primus = new Primus(srv).plugin('emitter', emitter);
   Socket = Socket || primus.Socket;
   srv.listen(done);
 });
