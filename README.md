@@ -25,7 +25,7 @@ var server = require('http').createServer();
 var primus = new Primus(server, { transformer: 'websockets', parser: 'JSON' });
 
 // add emitter to Primus
-primus.use('emitter', Emitter);
+primus.plugin('emitter', Emitter);
 
 primus.on('connection', function (spark) {
 
@@ -50,7 +50,7 @@ server.listen(8080);
 ### On the Client
 
 ```javascript
-var primus = Primus.connect('ws://localhost:8080');
+var primus = Primus.connect('http://localhost:8080');
 
 primus.on('open', function () {
 
