@@ -1,13 +1,13 @@
-var Emitter = require('../../');
+var emitter = require('../../');
 var Primus = require('primus');
 var http = require('http');
 var server = http.createServer();
 
 // THE SERVER
-var primus = new Primus(server, { transformer: 'websockets', parser: 'JSON' });
+var primus = new Primus(server);
 
 // Add emitter functionality to primus
-primus.use('emitter', Emitter);
+primus.plugin('emitter', emitter);
 
 // Server stuff
 primus.on('connection', function(spark){
@@ -19,20 +19,20 @@ primus.on('connection', function(spark){
   });
 
   setInterval(function(){
-    spark.emit('news', 'data');
+    spark.send('news', 'data');
   }, 2500);
 
 });
 
 
 // THE CLIENT
-function setClient (room) {
+function setClient() {
 
   var Socket = primus.Socket;
-  var socket = new Socket('ws://localhost:8080');
+  var socket = new Socket('http://localhost:8080');
 
   setInterval(function(){
-    socket.emit('news', { 'hello': 'world' }, function (data) {
+    socket.send('news', { 'hello': 'world' }, function (data) {
       console.log('sent', arguments);
     });
   }, 3500);
@@ -45,9 +45,10 @@ function setClient (room) {
 
 // Set first client
 setTimeout(function () {
-  setClient('me');
+  setClient();
 }, 0);
 
 server.listen(process.env.PORT || 8080, function(){
-  console.log('\033[96mlistening on localhost:9000 \033[39m');
+  var bound = server.address();
+  console.log('\033[96mlistening on %s:%d \033[39m', bound.address, bound.port);
 });
