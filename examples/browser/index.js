@@ -1,36 +1,27 @@
-var emitter = require('../../')
-  , Primus = require('primus')
-  , http = require('http')
-  , fs = require('fs');
+'use strict';
 
-var server = http.createServer(function server(req, res) {
+const Primus = require('primus');
+const http = require('http');
+const fs = require('fs');
+
+const emitter = require('../../');
+
+const server = http.createServer((req, res) => {
   res.setHeader('Content-Type', 'text/html');
   fs.createReadStream(__dirname + '/index.html').pipe(res);
 });
 
-// Primus server.
-var primus = new Primus(server);
+const primus = new Primus(server);
 
-// Add emitter functionality to primus
+// Add emitter plugin
 primus.plugin('emitter', emitter);
 
-// Listen for new connections
-primus.on('connection', function connection(spark) {
-  console.log('Incoming connection', spark.id);
-
-  spark.send('news', '[SERVER] => Hi from server', function (msg) {
+primus.on('connection', (spark) => {
+  spark.send('news', 'Hi client', (msg) => console.log('server ack %s', msg));
+  spark.on('news', (msg, fn) => {
     console.log(msg);
+    fn('ok');
   });
-
-  spark.on('news', function (msg, fn) {
-    console.log(msg);
-    fn('[SERVER ACK] => Message received');
-  });
-
 });
 
-// Start server listening
-server.listen(process.env.PORT || 8080, function(){
-  var bound = server.address();
-  console.log('\033[96mlistening on %s:%d \033[39m', bound.address, bound.port);
-});
+server.listen(() => console.log('listening on *:%d', server.address().port));

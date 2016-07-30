@@ -1,23 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Primus-Emitter example</title>
-    <script src="/primus/primus.js"></script>
+    <title>Primus Emitter Test</title>
   </head>
   <body>
-    <h1>Welcome to Primus-Emitter example.</h2>
+    <h1>Welcome to Primus Emitter example.</h2>
+    <script src="/primus/primus.js"></script>
     <script>
-      var primus = new Primus();
+      (function () {
+        var primus = new Primus();
 
-      primus.send('news', '[CLIENT] => Hi server', function (msg) {
-        console.log(msg);
-      });
+        primus.send('news', 'Hi server', function (msg) {
+          console.log('client ack', msg);
+        });
 
-      primus.on('news', function(msg, fn){
-        console.log(msg);
-        fn('[CLIENT ACK] => Message received');
-      });
+        primus.on('news', function(msg, fn){
+          console.log(msg);
+          fn('ok');
+        });
+      })();
     </script>
   </body>
 </html>
